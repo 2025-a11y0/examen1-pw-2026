@@ -13,6 +13,11 @@
 </h3>
 
 
+<div class="alert d-none" role="alert" id="alertMessage">
+    A simple danger alert—check it out!
+  </div>
+
+
 <div class="row">
 
   <!-- ========================= -->
@@ -31,7 +36,7 @@
 
       <div class="card-body">
 
-        <form method="POST" action="/carrers">
+        <form method="POST" action="/alumnos">
 
           <div class="mb-3">
 
@@ -39,12 +44,12 @@
               Nombre
             </label>
 
-            <input type="hidden" name="" id="carrerId">
+            <input type="hidden" name="" id="studentId">
 
             <input
               type="text"
-              id="name"
-              name="name"
+              id="nombre"
+              nombre="nombre"
               class="form-control"
               placeholder="Ingrese el nombre del estudiante..."
               required
@@ -59,8 +64,8 @@
 
             <input
               type="text"
-              id="name"
-              name="name"
+              id="apellido"
+              apellido="apellido"
               class="form-control"
               placeholder="Ingrese el apellido del estudiante..."
               required
@@ -76,8 +81,8 @@
 
             <input
               type="text"
-              id="name"
-              name="name"
+              id="carrera"
+              carrera="carrera"
               class="form-control"
               placeholder="Ingrese la carrera..."
               required
@@ -93,8 +98,8 @@
 
             <input
               type="text"
-              id="name"
-              name="name"
+              id="edad"
+              edad="edad"
               class="form-control"
               placeholder="Ingrese la edad del estudiante..."
               required
@@ -176,7 +181,7 @@
         <!-- TABLE -->
         <div class="table-responsive">
 
-          <table class="table table-striped table-hover" id="alumnos">
+          <table class="table table-striped table-hover" id="student">
 
             <thead>
               <tr>
@@ -192,7 +197,7 @@
 
             <tbody>
 
-              <% if (student && student.length > 0) { %>
+              <% if (students && students.length > 0) { %>
 
                 <% for (const student of students) { %>
 
@@ -203,13 +208,16 @@
                     </td>
 
                     <td>
-                      <%= student.name %>
+                      <%= student.nombre %>
+                    </td>
+
+                    <td>
+                      <%= student.apellido %>
                     </td>
 
                     <td>
                       <%= student.carrera %>
                     </td>
-
                     <td>
                       <%= student.edad %>
                     </td>
@@ -218,7 +226,7 @@
 
                       <button
                         class="btn btn-sm btn-outline-secondary me-1"
-                        onclick="editar(<%= student.id %>, <%= student.name %>, <%= student.carrera %>, <%= student.edad %> event)"
+                        onclick="editar(<%= student.id %>, event)"
                       >
                         <i class="fa fa-edit" ></i>
                         Editar
@@ -226,7 +234,7 @@
 
                       <button
                         class="btn btn-sm btn-outline-danger"
-                        onclick="eliminar(<%= student.id %>, <%= student.name %>, <%= student.carrera %>, <%= student.edad %> event)"
+                        onclick="eliminar(<%= student.id %>, event)"
                       >
                         <i class="fa fa-trash"></i>
                         Eliminar
@@ -265,50 +273,106 @@
 </div> </main>
 
 <script>
-    let carrerRows = document.getElementById("carrers").children[1].children.length;
+    let studentRows = document.getElementById("student").children[1].children.length;
 
     function limpiar(event){
       event.preventDefault();
-      document.getElementById("carrerId").value="";
-      document.getElementById("name").value="";
+      document.getElementById("studentId").value="";
+      document.getElementById("nombre").value="";
+      document.getElementById("apellido").value="";
+      document.getElementById("carrera").value="";
+      document.getElementById("edad").value="";
       document.getElementById("cardTitle").innerHTML = "Nueva Carrera";
     }
 
     function agregar(event){
         event.preventDefault();
 
-        let name = document.getElementById("name").value;
-        let carrersTable = document.getElementById("carrers");
-        let carrerId = document.getElementById("carrerId").value;
+        let nombre = document.getElementById("nombre").value;
+        let apellido = document.getElementById("apellido").value;
+        let carrera = document.getElementById("carrera").value;
+        let edad = document.getElementById("edad").value;
+        let studentTable = document.getElementById("student");
+        let studentId = document.getElementById("studentId").value;
 
-        if(carrerId==""){
+        if(studentId==""){
           let tr = document.createElement("TR");
           let td1 = document.createElement("TD");
           let td2 = document.createElement("TD");
           let td3 = document.createElement("TD");
+          let td4 = document.createElement("TD");
+          let td5 = document.createElement("TD");
+          let td6 = document.createElement("TD");
 
-          carrerRows = carrerRows + 1;
-          td1.innerHTML = carrerRows;
-          td2.innerHTML = name;
+          studentRows = studentRows + 1;
+          td1.innerHTML = studentRows;
+          td2.innerHTML = nombre;
+          td3.innerHTML = apellido;
+          td4.innerHTML = carrera;
+          td5.innerHTML = edad;
+          
+          if (nombre != "" || apellido != "" || carrera != "" || edad != "")
+        {
+            if(edad >= 16 && edad <= 100)
+            {
+              
+              tr.appendChild(td1);
+              tr.appendChild(td2);
+              tr.appendChild(td3);
+              tr.appendChild(td4);
+              tr.appendChild(td5);
+              tr.appendChild(td6);
+              console.log(tr);
 
-          tr.appendChild(td1);
-          tr.appendChild(td2);
-          tr.appendChild(td3);
+              studentTable.children[1].appendChild(tr);
 
-          console.log(tr);
+               alertMessage.classList.remove("d-none");
+                alertMessage.innerHTML = "Alumno agregado Exitosamente";
+                alertMessage.classList.remove("alert-danger");
+                alertMessage.classList.add("alert-success");
 
-          carrersTable.children[1].appendChild(tr);
+            }
+            else{
+                alertMessage.classList.remove("d-none");
+              alertMessage.classList.add("alert-danger");
+              alertMessage.classList.remove("alert-success");
+              alertMessage.innerHTML = "La edad es entre 16 a 100";
+
+            }
+          }
+          else
+            {
+              alertMessage.classList.remove("d-none");
+              alertMessage.classList.add("alert-danger");
+              alertMessage.classList.remove("alert-success");
+              alertMessage.innerHTML = "Completa todos los campos";
+            }
+
+          
+          
         }else{
-          let tbody = carrersTable.children[1];
+          let tbody = studentTable.children[1];
 
           for (let tr of tbody.children) {
             console.log("1 ++++++++++++++++++++")
             console.log(typeof tr.children[0].innerHTML.trim())
-            console.log(typeof carrerId)
-            if(tr.children[0].innerHTML.trim() == carrerId){
-              tr.children[1].innerHTML = name;
-              document.getElementById("carrerId").value="";
-              document.getElementById("name").value="";
+            console.log(typeof studentId)
+            if(tr.children[0].innerHTML.trim() == studentId){
+              tr.children[1].innerHTML = nombre;
+              tr.children[2].innerHTML = apellido;
+              tr.children[3].innerHTML = carrera;
+              tr.children[4].innerHTML = edad;
+              alertMessage.classList.remove("d-none");
+                alertMessage.innerHTML = "Alumno actualizado Exitosamente";
+                alertMessage.classList.remove("alert-danger");
+                alertMessage.classList.add("alert-success");
+
+              document.getElementById("studentId").value="";
+              document.getElementById("nombre").value="";
+              document.getElementById("apellido").value = "";
+              document.getElementById("carrera").value = "";
+              document.getElementById("edad").value = "";
+              document.getElementById("studentId").value = id;
               document.getElementById("cardTitle").innerHTML = "Nueva Carrera";
             }
           }
@@ -318,16 +382,26 @@
     function eliminar(id, event){
         let tr = event.currentTarget.parentElement.parentElement;
         tr.remove();
+        alertMessage.classList.remove("d-none");
+        alertMessage.classList.add("alert-danger");
+        alertMessage.classList.remove("alert-success");
+        alertMessage.innerHTML = "Elemento eliminado correctamente";
     }
 
     function editar(id, event){
         let tr = event.currentTarget.parentElement.parentElement;
         let idRow = tr.children[0].innerHTML;
-        let name = tr.children[1].innerHTML;
+        let nombre = tr.children[1].innerHTML;
+        let apellido = tr.children[2].innerHTML;
+        let carrera = tr.children[3].innerHTML;
+        let edad = tr.children[4].innerHTML;
 
         document.getElementById("cardTitle").innerHTML = "Editar Carrera";
 
-        document.getElementById("name").value = name.trim();
-        document.getElementById("carrerId").value = id;
+        document.getElementById("nombre").value = nombre.trim();
+        document.getElementById("apellido").value = apellido.trim();
+        document.getElementById("carrera").value = carrera.trim();
+        document.getElementById("edad").value = edad.trim();
+        document.getElementById("studentId").value = id;
     }
 </script>
